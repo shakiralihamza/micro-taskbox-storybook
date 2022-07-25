@@ -15,15 +15,10 @@ export interface TaskType {
 }
 
 const TaskList = () => {
-    const tasks = useSelector((state: any) => {
-        const tasksInOrder = [
-            ...state.taskbox.tasks.filter((t: TaskType) => t.state === 'TASK_PINNED'),
-            ...state.taskbox.tasks.filter((t: TaskType) => t.state !== 'TASK_PINNED'),
-        ];
-        return tasksInOrder.filter(
-            (t) => t.state === 'TASK_INBOX' || t.state === 'TASK_PINNED'
-        );
-    });
+    const tasks = useSelector((state: any) => ([
+        ...state.taskbox.tasks.filter((t: TaskType) => t.state === 'TASK_PINNED'),
+        ...state.taskbox.tasks.filter((t: TaskType) => t.state !== 'TASK_PINNED'),
+    ]));
 
     const {status} = useSelector((state: any) => state.taskbox);
 
