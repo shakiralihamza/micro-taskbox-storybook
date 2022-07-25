@@ -1,6 +1,8 @@
 import React from 'react';
 import Task from "./Task";
 import {List} from "@mui/material";
+import {useSelector, useDispatch} from 'react-redux';
+import {updateTaskState} from '../store/store';
 import LoadingTasks from "./LoadingTasks";
 import NoTasks from "./NoTasks";
 
@@ -12,35 +14,40 @@ export interface TaskType {
     onPinTask?: (id: string) => void;
 }
 
-interface TaskListProps {
-    tasks: TaskType[];
-    loading: boolean;
-}
+const TaskList = () => {
+    const tasks = useSelector((state: any) => {
+        const tasksInOrder = [
+            ...state.taskbox.tasks.filter((t: TaskType) => t.state === 'TASK_PINNED'),
+            ...state.taskbox.tasks.filter((t: TaskType) => t.state !== 'TASK_PINNED'),
+        ];
+        return tasksInOrder.filter(
+            (t) => t.state === 'TASK_INBOX' || t.state === 'TASK_PINNED'
+        );
+    });
 
-const TaskList: React.FC<TaskListProps> = ({tasks, loading}) => {
-    if (loading) {
+    const {status} = useSelector((state: any) => state.taskbox);
+
+    const dispatch = useDispatch();
+
+    const pinTask = (value: any) => {
+        // We're dispatching the Pinned event back to our store
+        dispatch(updateTaskState({id: value, newTaskState: 'TASK_PINNED'}));
+    };
+    const archiveTask = (value: any) => {
+        // We're dispatching the Archive event back to our store
+        dispatch(updateTaskState({id: value, newTaskState: 'TASK_ARCHIVED'}));
+    };
+
+    if (status === 'loading') {
         return <LoadingTasks/>;
     }
-
     if (tasks.length === 0) {
         return <NoTasks/>;
     }
 
-    function pinTask() {
-
-    }
-
-    function archiveTask() {
-
-    }
-
-    const tasksInOrder = [
-        ...tasks.filter((t) => t.state === "TASK_PINNED"),
-        ...tasks.filter((t) => t.state !== "TASK_PINNED"),
-    ];
     return (
         <List sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
-            {tasksInOrder.map((task) => {
+            {tasks.map((task) => {
                 return (
                     <Task
                         id={task.id}
