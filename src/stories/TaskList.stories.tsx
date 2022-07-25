@@ -21,7 +21,7 @@ export const MockedState = {
 };
 
 // A super-simple mock of a redux store
-const Mockstore = ({ taskboxState, children }) => (
+const Mockstore = ({ taskboxState, children }: {taskboxState: any, children: any}) => (
     <Provider
         store={configureStore({
             reducer: {
@@ -31,7 +31,7 @@ const Mockstore = ({ taskboxState, children }) => (
                     reducers: {
                         updateTaskState: (state, action) => {
                             const { id, newTaskState } = action.payload;
-                            const task = state.tasks.findIndex((task) => task.id === id);
+                            const task = state.tasks.findIndex((task: any) => task.id === id);
                             if (task >= 0) {
                                 state.tasks[task].state = newTaskState;
                             }
@@ -54,6 +54,7 @@ export default {
     excludeStories: /.*MockedState$/,
 } as ComponentMeta<typeof TaskList>;
 
+// @ts-ignore
 const Template: ComponentStory<typeof TaskList> = (args) => <TaskList {...args} />;
 
 export const Default = Template.bind({});
